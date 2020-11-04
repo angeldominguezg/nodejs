@@ -18,7 +18,7 @@ html(lang="en")
             h1 My Products
             p List of all the products...
             div.grid
-                if prods > 0
+                if prods.length > 0
                     each product in prods
                         article.card.product-item
                             header.card__header
