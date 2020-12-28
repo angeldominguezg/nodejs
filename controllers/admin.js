@@ -49,18 +49,22 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }
     const productId = req.params.productId;
-    Product.findById(productId, product => {
-        if(!product){
-            console.log('[getEditProduct] Error not find product to edit');
-            return redirect('/');
-        }
-        res.render('admin/edit-product',{ 
-            pageTitle: "Edit Product", 
-            path: '/admin/edit-product', 
-            editing: editMode,
-            product: product
-        });
-    });
+    Product.findByPk(productId)
+        .then(product => {
+            if(!product){
+                console.log('[getEditProduct] Error not find product to edit');
+                return redirect('/');
+            }
+            res.render('admin/edit-product',{ 
+                pageTitle: "Edit Product", 
+                path: '/admin/edit-product', 
+                editing: editMode,
+                product: product
+            });
+        })
+        .catch( err => {
+            console.log(err);
+        })
 };
 
 exports.postEditProduct = (req, res, next) => {
