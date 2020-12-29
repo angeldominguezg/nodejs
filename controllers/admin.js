@@ -15,17 +15,18 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const description = req.body.description;
-    Product.create({
+    req.user.createProduct({
         title: title,
         description: description,
         price: price,
         imageUrl: imageUrl,
-    }).then( result => {
-        console.log(result);
-        res.redirect('/');
-    }).catch( err => {
-        console.log(err);
-    });
+    })
+        .then( result => {
+            console.log(result);
+            res.redirect('/');
+        }).catch( err => {
+            console.log(err);
+        });
 };
 
 exports.getProducts = (req, res, next) => {
@@ -49,7 +50,7 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }
     const productId = req.params.productId;
-    Product.findByPk(productId)
+    req.user.getProducts({where: {id: productId}})
         .then(product => {
             if(!product){
                 console.log('[getEditProduct] Error not find product to edit');
@@ -59,7 +60,7 @@ exports.getEditProduct = (req, res, next) => {
                 pageTitle: "Edit Product", 
                 path: '/admin/edit-product', 
                 editing: editMode,
-                product: product
+                product: product[0]
             });
         })
         .catch( err => {
