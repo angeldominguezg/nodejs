@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Order = require('../models/order');
+// const Order = require('../models/order');
 
 exports.postAddProduct = (req, res, next) => {
     const product = new Product(req.body.title);
@@ -7,8 +7,23 @@ exports.postAddProduct = (req, res, next) => {
     res.redirect('/');
 };
 
+exports.getIndex = (req, res, next) => {
+    Product.fetchAll().then(
+        (products) => {
+            console.log(res);
+            res.render('shop/index', { 
+                prods: products, 
+                pageTitle: 'Shop', 
+                path: '/'
+            });
+        }
+    ).catch( err => {
+        console.log(err);
+    });
+};
+
 exports.getProducts = (req, res, next) => {
-    Product.findAll()
+    Product.fetchAll()
     .then(products => {
         res.render('shop/product-list', { 
             prods: products, 
@@ -23,7 +38,7 @@ exports.getProducts = (req, res, next) => {
 
 exports.getProduct = (req, res, next) => {
     const productId = req.params.productId;
-    Product.findByPk(productId)
+    Product.findById(productId)
     .then(product => {
         res.render('shop/product-detail', { 
             product: product, 
@@ -33,21 +48,6 @@ exports.getProduct = (req, res, next) => {
     })
     .catch((err) => {
         console.log(err)
-    });
-};
-
-exports.getIndex = (req, res, next) => {
-    Product.findAll().then(
-        (products) => {
-            console.log(res);
-            res.render('shop/index', { 
-                prods: products, 
-                pageTitle: 'Shop', 
-                path: '/'
-            });
-        }
-    ).catch( err => {
-        console.log(err);
     });
 };
 
