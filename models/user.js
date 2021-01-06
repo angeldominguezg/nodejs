@@ -8,13 +8,18 @@ class User {
   }
 
   save() {
-    const db = getDb;
-     return db.collection('users').insertOne(this);
+    const db = getDb();
+    return db.collection('users').insertOne(this);
   }
 
   static findById(userId) {
-    const db = getDb;
-    return db.collection('users').findOne({_id: new mongoDb.ObjectId(id)});
+    const db = getDb();
+    return db.collection('users').findOne({_id: new mongoDb.ObjectId(userId)})
+      .then( user => {
+        console.log(user);
+        return user;
+      })
+      .catch( err => console.log(err));
   }
 }
 
