@@ -1,3 +1,4 @@
+const product = require('../models/product');
 const Product = require('../models/product');
 
 
@@ -95,10 +96,11 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const productId = req.body.productId;
-    Product.deleteById(productId)
-        .then( result => {
-            console.log('Product deleted!');
-            res.redirect('/admin/products');
-        })
-        .catch(err => console.log(err));
+
+    product.findByIdAndRemove(productId)
+      .then( result => {
+          console.log('Product deleted!');
+          res.redirect('/admin/products');
+      })
+      .catch(err => console.log(err));
 };
