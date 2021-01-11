@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-// const Order = require('../models/order');
 
 exports.postAddProduct = (req, res, next) => {
     const product = new Product(req.body.title);
@@ -8,7 +7,8 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-    Product.fetchAll().then(
+    Product.find()
+      .then(
         (products) => {
             console.log(res);
             res.render('shop/index', { 
@@ -17,14 +17,16 @@ exports.getIndex = (req, res, next) => {
                 path: '/'
             });
         }
-    ).catch( err => {
+      )
+      .catch( err => {
         console.log(err);
-    });
+      });
 };
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     .then(products => {
+        console.log('getProducts: ', products);
         res.render('shop/product-list', { 
             prods: products, 
             pageTitle: 'All Products', 

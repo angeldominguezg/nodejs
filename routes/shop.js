@@ -4,9 +4,11 @@ const shopController = require('../controllers/shop')
 
 const router = express.Router();
 
-// router.get('/products', shopController.getProducts);
+router.get('/products', shopController.getProducts);
 
-// router.get('/products/:productId', shopController.getProduct);
+router.get('/', shopController.getIndex);
+
+router.get('/products/:productId', shopController.getProduct);
 
 // router.post('/cart', shopController.postCart);
 
@@ -20,6 +22,5 @@ const router = express.Router();
 
 // router.get('/orders', shopController.getOrders);
 
-// router.get('/', shopController.getIndex);
 
 module.exports = router;
