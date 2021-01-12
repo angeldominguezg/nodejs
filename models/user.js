@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Product = require('./product');
 
 const userSchema = new Schema({
   name: {
@@ -18,7 +19,7 @@ const userSchema = new Schema({
   }
 });
 
-userSchema.methods.addToCart = function (product) {
+userSchema.methods.addToCart = function(product) {
   const cartProductsIndex = this.cart.items.findIndex(cp => {
     return cp.productId.toString() === product._id.toString();
   });
@@ -37,6 +38,29 @@ userSchema.methods.addToCart = function (product) {
 
   this.cart = updatedCart;
   return this.save();
+}
+
+userSchema.methods.getCart = function () {
+  const productIds = this.cart.items.map(cartItem => cartItem.productId );
+  Product.find({'_id': productIds})
+    .exec()
+    .then( products => {
+      // agregarle la cantidad al carrito
+      const productToView = products.map( product => {
+        // console.log('[map.product]', product._id);
+        // con el product._id buscar la cantidad en el carrito 
+        // y meterla en lo que retorna el map
+        return {
+          ...product,
+          quantity: this.cart.items.find(i => {
+                      return i.productId === product._id;
+                    }).quantity
+        }
+      })
+      console.log('[productToView]', productToView);
+    })
+    .catch(err => console.log(err))
+
 }
 
 module.exports = mongoose.model('User', userSchema);
