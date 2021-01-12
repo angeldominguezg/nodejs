@@ -40,27 +40,12 @@ userSchema.methods.addToCart = function(product) {
   return this.save();
 }
 
-userSchema.methods.getCart = function () {
-  const productIds = this.cart.items.map(cartItem => cartItem.productId );
-  Product.find({'_id': productIds})
-    .exec()
-    .then( products => {
-      // agregarle la cantidad al carrito
-      const productToView = products.map( product => {
-        // console.log('[map.product]', product._id);
-        // con el product._id buscar la cantidad en el carrito 
-        // y meterla en lo que retorna el map
-        return {
-          ...product,
-          quantity: this.cart.items.find(i => {
-                      return i.productId === product._id;
-                    }).quantity
-        }
-      })
-      console.log('[productToView]', productToView);
-    })
-    .catch(err => console.log(err))
-
+userSchema.methods.removeFromCart = function(productId) {
+    const updatedCartItems = this.cart.items.filter(item => {
+      return item.productId.toString() !== productId.toString()
+    });
+    this.cart.items = updatedCartItems;
+    return this.save()
 }
 
 module.exports = mongoose.model('User', userSchema);
