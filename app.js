@@ -14,12 +14,19 @@ const User = require('./models/user');
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require('express-session');
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ 
+    secret: 'my_secret',
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 
 app.use((req, res, next) => {
     User.findById('5ffd6f5174215211ef56d625')
