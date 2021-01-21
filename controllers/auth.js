@@ -1,18 +1,20 @@
 const { get } = require("mongoose");
+const User = require('../models/user');
 
 exports.getLogin = (req, res, next) => {
-
-  const isLoggedIn = req.session.isLoggedIn;
-  console.log('isLoggedIn', req.session.isLoggedIn);
-
   res.render('auth/login', {  
       path: '/login',
       pageTitle: 'Login',
-      isAuthenticated: isLoggedIn
+      isAuthenticated: false
   });
 };
 
 exports.postLogin = (req, res, next) => {
-  req.session.isLoggedIn= true;
-  res.redirect('/');
+  User.findById('5ffd6f5174215211ef56d625')
+  .then( user => {
+          req.session.isLoggedIn= true;
+          req.session.user = user;
+          res.redirect('/');
+      })
+      .catch( err => console.log(err));
 };
