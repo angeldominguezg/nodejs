@@ -39,6 +39,21 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')));
 
+// User session middleware
+app.use((req, res, next)=>{
+  if(!req.session.user){
+    return next();
+  }
+  User.findById(req.session.user._id)
+    .then( user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => {
+      console.log(err)
+    })
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
