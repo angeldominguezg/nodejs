@@ -1,7 +1,7 @@
-const path = require('path');
+// const path = require('path');
 const express = require('express');
 const authController = require('../controllers/auth');
-const { route } = require('./admin');
+// const { route } = require('./admin');
 
 const router = express.Router();
 

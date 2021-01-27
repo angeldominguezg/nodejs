@@ -22,6 +22,8 @@ exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  console.log('csrf', req.body._csrf);
+
   User.findOne({ email: email })
   .then( user => {
         if (!user) {
