@@ -11,6 +11,7 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
+const flash = require('connect-flash');
 
 const errorController = require('./controllers/error');
 const MONGODB_URI = 'mongodb+srv://'+process.env.DB_USER+':'+process.env.DB_PASSWORD+'@cluster0.xeicl.mongodb.net/shop';
@@ -39,6 +40,7 @@ app.use(session({
   })
 );
 app.use(csrfProtection);
+app.use(flash());
 
 
 // User session middleware
