@@ -1,6 +1,15 @@
 const { get } = require("mongoose");
+require('dotenv').config();
 const User = require('../models/user');
 const bcryptjs = require('bcryptjs');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+  auth: {
+    api_key: process.env.SENDGRID_API
+  }
+}));
 
 exports.getLogin = (req, res, next) => {
   let message = req.flash('error');
@@ -90,6 +99,16 @@ exports.postSignup = (req, res, next) => {
           })
           .then( result => {
             res.redirect('/login');
+            return transporter.sendMail({
+              to: email,
+              from: 'node-shop@mail.test',
+              subject: 'Signup Succeeded',
+              text: 'Hello world',
+              html: '<b>Hello world</b>'
+            });
+          })
+          .catch( err => {
+            console.log(err);
           });
       }
     })
