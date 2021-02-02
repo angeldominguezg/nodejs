@@ -1,9 +1,10 @@
-const { get } = require("mongoose");
 require('dotenv').config();
-const User = require('../models/user');
+const crypto = require('crypto');
 const bcryptjs = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+const User = require('../models/user');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
@@ -123,3 +124,79 @@ exports.postLogout = (req, res, next) => {
     res.redirect('/');
   });
 };
+
+exports.getReset = (req, res, next) => {
+  let message = req.flash('error');
+  if( message.length > 0 ){
+    message = message[0]
+  } else {
+    message = null
+  }
+  res.render('auth/reset', {
+    path: '/reset',
+    pageTitle: 'Reset Password',
+    isAuthenticated: false,
+    errorMessage: message
+  });
+}
+
+exports.postReset = (req, res, next) => {
+  crypto.randomBytes(32, (err, buffer) => {
+    if(err) {
+      console.log('err', err);
+      return res.redirect('/reset');
+    }
+
+    const token = buffer.toString('hex');
+    User.findOne({email: req.body.email})
+      .then( user => {
+        if(!user) {
+          req.flash('error', 'No acconut with that email found.');
+          return res.redirect('/reset');
+        }
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        return user.save();
+      })
+      .then( result => {
+        console.log('TOKEN', token);
+        res.redirect('/');
+        transporter.sendMail({
+          to: req.body.email,
+          from: 'node-shop@mail.test',
+          subject: 'Password Reset',
+          text: 'Password Reset',
+          html: `
+            <p>You request a password reset</p>
+            <p>Click this link to <a href="http://localhost:3000/reset/${token}">set new password</a></p>
+            `
+        });
+      })
+      .catch( err => {
+        console.log(err);
+      });
+  });
+}
+
+exports.getNewPassword = (req, res, next) => {
+
+  const token = req.params.token;
+  User.findOne({ resetToken: token, resetTokenExpiration: {$gt: Date.now() }})
+    .then( user => {
+      let message = req.flash('error');
+      if( message.length > 0 ){
+        message = message[0]
+      } else {
+        message = null
+      }
+      res.render('auth/new-password', {
+        path: '/new-password',
+        pageTitle: 'New Password',
+        errorMessage: message,
+        userId: user._id.toString()
+      });
+    })
+    .catch( err => {
+      console.log(err);
+    })
+}
