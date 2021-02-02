@@ -159,7 +159,7 @@ exports.postReset = (req, res, next) => {
         return user.save();
       })
       .then( result => {
-        console.log('TOKEN', token);
+        console.log('TOKEN', `href="http://localhost:3000/reset/${token}`);
         res.redirect('/');
         transporter.sendMail({
           to: req.body.email,
@@ -179,7 +179,6 @@ exports.postReset = (req, res, next) => {
 }
 
 exports.getNewPassword = (req, res, next) => {
-
   const token = req.params.token;
   User.findOne({ resetToken: token, resetTokenExpiration: {$gt: Date.now() }})
     .then( user => {
@@ -193,10 +192,40 @@ exports.getNewPassword = (req, res, next) => {
         path: '/new-password',
         pageTitle: 'New Password',
         errorMessage: message,
-        userId: user._id.toString()
+        userId: user._id.toString(),
+        passwordToken: token
       });
     })
     .catch( err => {
       console.log(err);
+    })
+}
+
+exports.postNewPassword = (req, res, next) => {
+  const newPassword = req.body.password;
+  const userId = req.body.userId;
+  const passwordToken = req.body.passwordToken;
+  let resetUser;
+
+  User.findOne({
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId
+  })
+    .then( user => {
+      resetUser = user;
+      return bcryptjs.hash(newPassword, 12);
+    })
+    .then( hashedPassword => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then(result => {
+      res.redirect('/login');
+    })
+    .catch( err => {
+     console.log(err);
     })
 }
