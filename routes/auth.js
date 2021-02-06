@@ -20,7 +20,9 @@ router.post('/signup',
         return true;
       }
     }),
-  body('password', 'Please enter a password with only numbers, text and at least 5 characters.')
+  body(
+      'password', 
+      'Please enter a password with only numbers, text and at least 5 characters.')
     .isLength({min: 5})
     .isAlphanumeric(),
   authController.postSignup);
