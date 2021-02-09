@@ -16,7 +16,7 @@ router.post('/signup',
     .isEmail()
     .withMessage('Please enter a valid Email')
     .custom((value, {req}) => {
-      return User.findOne({email: email})
+      return User.findOne({email: value})
         .then(userDoc => {
           if (userDoc){
             return Promise.reject('E-mail exists already, please pick a different one.');
@@ -38,7 +38,16 @@ router.post('/signup',
     }),
   authController.postSignup);
 
-router.post('/login', authController.postLogin);
+router.post('/login', 
+  check('email')
+    .isEmail()
+    .withMessage('Please enter a valid Email'),
+  body(
+    'password', 
+    'Please enter a password at least 5 characters.')
+    .isLength({min: 5})
+  ,authController.postLogin
+);
 
 router.post('/logout', authController.postLogout);
 
