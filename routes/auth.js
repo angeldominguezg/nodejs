@@ -38,7 +38,7 @@ router.post('/signup',
     }),
   authController.postSignup);
 
-router.post('/login', 
+router.post('/login', [
   check('email')
     .isEmail()
     .withMessage('Please enter a valid Email'),
@@ -46,7 +46,8 @@ router.post('/login',
     'password', 
     'Please enter a password at least 5 characters.')
     .isLength({min: 5})
-  ,authController.postLogin
+    .isAlphanumeric()
+  ], authController.postLogin
 );
 
 router.post('/logout', authController.postLogout);
