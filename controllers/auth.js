@@ -38,7 +38,8 @@ exports.getSignup = (req, res, next) => {
     path: '/signup',
     pageTitle: 'Signup',
     isAuthenticated: false,
-    errorMessage: message
+    errorMessage: message,
+    oldInput: { name: '', email: '', password: '' }
   });
 };
 
@@ -98,7 +99,8 @@ exports.postSignup = (req, res, next) => {
       path: '/signup',
       pageTitle: 'Signup',
       isAuthenticated: false,
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      oldInput: { name: name, email: email, password: password }
     });
   }
   bcryptjs
