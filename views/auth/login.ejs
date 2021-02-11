@@ -13,11 +13,19 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="form-control">
                 <label for="email">E-mail</label>
-                <input type="email" name="email" id="email">
+                <input type="email" name="email" 
+                  id="email"
+                  value="<%= oldInput.email %>"
+                  class="<%= validationErrors.find( e => e.param === 'email') ? 'invalid' : '' %>"
+                >
             </div>
             <div class="form-control">
                 <label for="password">Password</label>
-                <input type="password" name="password" id="password">
+                <input type="password" name="password" 
+                  id="password"
+                  value="<%= oldInput.password %>"
+                  class="<%= validationErrors.find( e => e.param === 'password') ? 'invalid' : '' %>"
+                >
             </div>
             <button class="btn" type="submit">Login</button>
           </form>
