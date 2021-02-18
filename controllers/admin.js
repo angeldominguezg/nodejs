@@ -53,6 +53,7 @@ exports.postAddProduct = (req, res, next) => {
     })
     .catch((err) => {
       console.log(err);
+      res.redirect('/500');
     });
 };
 
