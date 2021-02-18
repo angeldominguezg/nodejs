@@ -52,8 +52,8 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect("/");
     })
     .catch((err) => {
-      console.log(err);
-      res.redirect('/500');
+      const error = new Error(err);
+      return next(error);
     });
 };
 
